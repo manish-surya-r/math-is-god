@@ -1,0 +1,6 @@
+{
+  "name": "Math Is God",
+  "description": "An elegant educational website inspired by George Pólya and the philosophy of deep problem solving.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
