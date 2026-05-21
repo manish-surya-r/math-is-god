@@ -239,7 +239,7 @@ export default function ArticleReader({ article, onBack, onNavigateArticle }: Ar
           {/* Right Column: Actual Markdown body */}
           <main className="lg:col-span-9">
             {/* Embedded YouTube Player if it's a Course Lesson */}
-            {youtubeId && (
+            {youtubeId ? (
               <div className="mb-10 rounded-2xl border border-white/10 overflow-hidden shadow-2xl bg-black text-center max-w-4xl">
                 <div className="relative aspect-video">
                   <iframe
@@ -256,6 +256,24 @@ export default function ArticleReader({ article, onBack, onNavigateArticle }: Ar
                   <span>Duration: {article.frontMatter.duration || '15 mins'}</span>
                 </div>
               </div>
+            ) : (
+              category === 'courses' && (
+                <div className="mb-10 rounded-2xl border border-white/10 overflow-hidden shadow-2xl bg-neutral-950 text-center max-w-4xl">
+                  <div className="relative aspect-video flex flex-col items-center justify-center p-6 border-b border-white/5">
+                    <div className="h-16 w-16 rounded-full border border-white/10 bg-white/5 flex items-center justify-center text-gray-500 mb-4 animate-pulse">
+                      <Play className="h-7 w-7 text-blue-400/60 fill-blue-400/10" />
+                    </div>
+                    <h3 className="text-white text-sm font-semibold tracking-wide font-display">Video lecture is blank</h3>
+                    <p className="text-xs text-white/40 max-w-md mt-2 font-sans font-light leading-relaxed">
+                      This video is intentionally left blank because no custom video was uploaded for this chapter.
+                    </p>
+                  </div>
+                  <div className="flex items-center justify-between px-5 py-3 text-[10px] font-mono text-white/40">
+                    <span className="flex items-center gap-2"><Play className="h-3.5 w-3.5 text-blue-400" /> Blank Video Lesson Placeholder</span>
+                    <span>Duration: {article.frontMatter.duration || '15 mins'}</span>
+                  </div>
+                </div>
+              )
             )}
 
             {/* Markdown rendered nodes */}

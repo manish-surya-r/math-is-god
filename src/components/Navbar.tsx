@@ -42,7 +42,7 @@ export default function Navbar({ currentTab, setCurrentTab, searchQuery, setSear
               Math Is <span className="font-serif italic text-blue-400 ml-0.5">God</span>
             </span>
             <p className="font-mono text-[9px] uppercase tracking-widest text-white/30">
-              Heuristics & Problem Solving
+              Heuristics and problem solving
             </p>
           </div>
         </div>

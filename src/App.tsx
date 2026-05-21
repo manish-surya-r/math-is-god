@@ -79,6 +79,7 @@ export default function App() {
     setSelectedArticleSlug(null); // Clear reader
     setSelectedTag(null); // Clear filters
     setSelectedDifficulty(null);
+    setSearchQuery(''); // Clear search query to reset the view
   };
 
   const handleArticleClick = (slug: string) => {
