@@ -79,6 +79,11 @@ export default function Navbar({ currentTab, setCurrentTab, searchQuery, setSear
               id="global-search-input"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  (e.target as HTMLInputElement).blur();
+                }
+              }}
               placeholder="Search concepts, proofs..."
               className="h-8.5 w-48 rounded-md border border-white/5 bg-white/5 pl-9 pr-3 text-xs tracking-wide text-white placeholder-gray-500 transition-all focus:w-60 focus:border-blue-500/30 focus:bg-white/10 focus:outline-none"
             />
@@ -122,6 +127,11 @@ export default function Navbar({ currentTab, setCurrentTab, searchQuery, setSear
               id="mobile-search-input"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  (e.target as HTMLInputElement).blur();
+                }
+              }}
               placeholder="Search articles, problems..."
               className="h-8.5 w-full rounded-md border border-white/5 bg-neutral-900 pl-9 pr-8 text-xs text-white placeholder-gray-500"
             />

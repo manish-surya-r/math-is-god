@@ -61,6 +61,19 @@ export default function App() {
     return allArticles.slice(0, 3);
   }, [allArticles]);
 
+  // Global search matching articles (searches all articles site-wide instead of per-category limit)
+  const searchedArticles = useMemo(() => {
+    if (!searchQuery.trim()) return [];
+    const q = searchQuery.toLowerCase();
+    return allArticles.filter(
+      art =>
+        art.frontMatter.title.toLowerCase().includes(q) ||
+        art.frontMatter.description.toLowerCase().includes(q) ||
+        art.content.toLowerCase().includes(q) ||
+        art.frontMatter.tags.some(t => t.toLowerCase().includes(q))
+    );
+  }, [allArticles, searchQuery]);
+
   const handleTabChange = (tabId: string) => {
     setCurrentTab(tabId);
     setSelectedArticleSlug(null); // Clear reader
@@ -121,15 +134,90 @@ export default function App() {
           ) : (
             // 💻 DESKTOP TAB ROUTING
             <motion.div
-              key={currentTab}
+              key={searchQuery.trim() !== '' ? 'search-results' : currentTab}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.25 }}
             >
               
+              {/* --- 🔍 GLOBAL SEARCH VIEW --- */}
+              {searchQuery.trim() !== '' && (
+                <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12 md:py-16 animate-fade-in">
+                  
+                  {/* Search Results Header */}
+                  <div className="mb-12 border-b border-white/5 pb-8 relative">
+                    <div className="absolute right-0 top-0 h-40 w-40 bg-blue-500/5 rounded-full blur-2xl" />
+                    
+                    <span className="font-mono text-xs uppercase tracking-widest text-[#93c5fd]">
+                      Global Query Search / Results
+                    </span>
+                    <h1 className="font-display text-4xl font-light tracking-tight text-white mt-2 mb-4">
+                      Search Results for <span className="font-serif italic text-blue-400">&quot;{searchQuery}&quot;</span>
+                    </h1>
+                    <p className="max-w-2xl text-sm text-white/50 leading-relaxed font-sans font-light">
+                      Found {searchedArticles.length} matching analytical {searchedArticles.length === 1 ? 'article' : 'articles'} across our heuristics library.
+                    </p>
+                  </div>
+
+                  {/* Results Layout Grid */}
+                  <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
+                    
+                    {/* Left Info Panel */}
+                    <aside className="lg:col-span-3 space-y-6">
+                      <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-5 backdrop-blur-sm sticky top-24">
+                        <h3 className="font-mono text-[10px] uppercase tracking-widest text-blue-400 flex items-center gap-2 mb-4">
+                          Search Insights
+                        </h3>
+                        
+                        <p className="text-xs text-white/40 leading-relaxed font-light mb-4">
+                          Looking for something else? Try searching for direct theorem names like <code className="text-blue-300 bg-white/5 px-1 py-0.5 rounded">Euler</code>, problem keywords, or tags like <code className="text-blue-300 bg-white/5 px-1.5 py-0.5 rounded">#Invariants</code>.
+                        </p>
+
+                        <button
+                          onClick={handleClearFilters}
+                          className="w-full py-2 border border-red-500/20 hover:border-red-500/40 text-red-400 hover:bg-red-500/5 rounded-md text-xs font-mono transition-all uppercase tracking-wider bg-transparent"
+                        >
+                          Clear Search
+                        </button>
+                      </div>
+                    </aside>
+
+                    {/* Right Results Grid */}
+                    <main className="lg:col-span-9">
+                      {searchedArticles.length > 0 ? (
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6" id="search-results-grid">
+                          {searchedArticles.map((article) => (
+                            <ArticleCard
+                              key={article.slug}
+                              article={article}
+                              onClick={() => handleArticleClick(article.slug)}
+                            />
+                          ))}
+                        </div>
+                      ) : (
+                        <div className="text-center py-16 rounded-xl border border-white/5 bg-gray-900/10">
+                          <Compass className="mx-auto h-12 w-12 text-gray-400/40 mb-4 animate-pulse" />
+                          <h3 className="font-display font-semibold text-white text-base">No results matched your query</h3>
+                          <p className="mt-2 text-xs text-gray-400 max-w-sm mx-auto font-sans leading-relaxed">
+                            Try simpler terms or check for typos in your query.
+                          </p>
+                          <button
+                            onClick={handleClearFilters}
+                            className="mt-6 rounded-md bg-white/5 border border-white/10 px-4 py-2 text-xs font-mono text-white hover:bg-white/10"
+                          >
+                            Reset Search
+                          </button>
+                        </div>
+                      )}
+                    </main>
+
+                  </div>
+                </div>
+              )}
+              
               {/* --- 🏠 HOME VIEW --- */}
-              {currentTab === 'home' && (
+              {searchQuery.trim() === '' && currentTab === 'home' && (
                 <div>
                   <Hero onExploreClick={handleTabChange} />
                   
@@ -214,7 +302,7 @@ export default function App() {
               )}
 
               {/* --- 📖 CATEGORY LIST VIEWS (Programming, Math, Thinking) --- */}
-              {currentTab !== 'home' && currentTab !== 'courses' && (
+              {searchQuery.trim() === '' && currentTab !== 'home' && currentTab !== 'courses' && (
                 <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12 md:py-16">
                   
                   {/* Category Header */}
@@ -343,7 +431,7 @@ export default function App() {
                 </div>
               )}
                   {/* --- 📚 COURSES VIEW --- */}
-              {currentTab === 'courses' && (
+              {searchQuery.trim() === '' && currentTab === 'courses' && (
                 <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12 md:py-16">
                   
                   {/* Category Header */}
